@@ -27,6 +27,40 @@
             user-select: none;
         }
 
+        /* Pantalla inicial para desbloquear audio en móviles */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(252, 248, 242, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            gap: 20px;
+        }
+
+        .start-btn {
+            background-color: var(--dark-pink);
+            color: white;
+            border: 2px solid var(--dark-pink);
+            padding: 12px 30px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(224, 109, 125, 0.3);
+            transition: background 0.2s;
+        }
+
+        .start-btn:hover {
+            background-color: #c95a6b;
+        }
+
         .bg-heart {
             position: absolute;
             color: rgba(224, 109, 125, 0.2);
@@ -54,7 +88,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 60px;
+            gap: 40px;
             z-index: 2;
             height: 80vh;
             justify-content: space-between;
@@ -103,6 +137,25 @@
             margin-top: 5px;
         }
 
+        /* Botón de Letra */
+        .lyrics-btn {
+            background: white;
+            border: 2px solid var(--dark-pink);
+            color: var(--dark-pink);
+            padding: 6px 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .lyrics-btn:hover {
+            background: var(--window-bg);
+        }
+
+        /* Modales */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -143,6 +196,15 @@
             letter-spacing: 1px;
         }
 
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--dark-pink);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
         .window-dots {
             display: flex;
             gap: 4px;
@@ -157,9 +219,11 @@
         }
 
         .modal-body {
-            padding: 25px 20px;
+            padding: 20px;
             text-align: center;
             background: rgba(255, 255, 255, 0.85);
+            max-height: 250px;
+            overflow-y: auto;
         }
 
         .hearts-top {
@@ -172,19 +236,28 @@
         .modal-body h2 {
             font-size: 16px;
             color: var(--text-color);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+        }
+
+        .lyrics-text {
+            font-size: 12px;
+            color: var(--text-color);
+            line-height: 1.5;
+            white-space: pre-line;
+            text-align: left;
+            padding: 0 10px;
         }
 
         .cat-art {
-            font-size: 60px;
-            margin: 15px 0;
+            font-size: 50px;
+            margin: 10px 0;
         }
 
         .btn-container {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-top: 25px;
+            margin-top: 20px;
             position: relative;
             height: 40px;
         }
@@ -218,6 +291,13 @@
 </head>
 <body>
 
+    <!-- Pantalla de inicio para garantizar reproducción en móviles -->
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <div style="font-size: 40px;">💌</div>
+        <div style="color: var(--dark-pink); font-weight: bold; font-size: 14px;">Para una persona especial</div>
+        <button class="start-btn" onclick="startExperience()">Abrir cartita</button>
+    </div>
+
     <audio id="bgMusic" loop>
         <source src="Goo Iris.mp3" type="audio/mp3">
     </audio>
@@ -228,6 +308,7 @@
         <div class="envelope-box" id="envelopeBox">
             <div class="envelope">💌</div>
             <div class="envelope-text">♥ From Someone Special For You ♥</div>
+            <button class="lyrics-btn" onclick="openLyrics()">Ver Letra 🎵</button>
         </div>
 
         <div class="bow-section" id="bowSection">
@@ -236,6 +317,7 @@
         </div>
     </div>
 
+    <!-- Modal de la Pregunta Principal -->
     <div class="modal-overlay" id="modalOverlay" style="display: none;">
         <div class="modal-window">
             <div class="modal-header">
@@ -254,6 +336,27 @@
                     <button class="btn btn-yes" id="yesBtn" onclick="acceptLove()">YES</button>
                     <button class="btn btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de la Letra -->
+    <div class="modal-overlay" id="lyricsModal" style="display: none;">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title">IRIS - GOO GOO DOLLS</span>
+                <button class="close-modal" onclick="closeLyrics()">X</button>
+            </div>
+            <div class="modal-body">
+                <div class="lyrics-text">And I'd give up forever to touch you
+'Cause I know that you feel me somehow
+'Cause you're closer to heaven than I'll ever be
+And I don't want to go home right now
+
+And all I can taste is this moment
+And all I can breathe is your life
+'Cause sooner or later it's over
+I just don't want to miss you tonight</div>
             </div>
         </div>
     </div>
@@ -277,6 +380,22 @@
         }
         createBgHearts();
 
+        function startExperience() {
+            const overlay = document.getElementById('welcomeOverlay');
+            overlay.style.display = 'none';
+
+            const music = document.getElementById('bgMusic');
+            music.play().catch(err => console.log("Error de reproducción:", err));
+        }
+
+        function openLyrics() {
+            document.getElementById('lyricsModal').style.display = 'flex';
+        }
+
+        function closeLyrics() {
+            document.getElementById('lyricsModal').style.display = 'none';
+        }
+
         const bowSection = document.getElementById('bowSection');
         let isDragging = false;
         let startY = 0;
@@ -294,11 +413,6 @@
         function startDrag(e) {
             isDragging = true;
             startY = e.clientY || e.touches[0].clientY;
-
-            const music = document.getElementById('bgMusic');
-            if (music.paused) {
-                music.play().catch(err => console.log("Reproducción bloqueada por el navegador"));
-            }
         }
 
         function drag(e) {
