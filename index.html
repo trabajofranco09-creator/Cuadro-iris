@@ -7,10 +7,9 @@
     <style>
         :root {
             --bg-color: #0f1016;
-            --card-bg: #181a26;
             --primary-pink: #e06d7d;
             --text-main: #fcf8f2;
-            --text-muted: #9ba1a6;
+            --text-muted: #888d9c;
         }
 
         body {
@@ -28,7 +27,7 @@
             user-select: none;
         }
 
-        /* Pantalla inicial con el botón solicitado */
+        /* Pantalla de inicio inicial con el botón solicitado */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -62,72 +61,54 @@
             background-color: #c95a6b;
         }
 
-        /* Reproductor y Letra */
+        /* Contenedor principal de la letra y controles */
         .player-container {
-            background-color: var(--card-bg);
-            border: 1px solid #2a2d3d;
-            border-radius: 16px;
-            width: 350px;
-            max-width: 90%;
-            padding: 30px 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 35px;
             z-index: 2;
+            width: 90%;
+            max-width: 600px;
         }
 
-        .song-info {
-            text-align: center;
+        .song-header {
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            text-transform: uppercase;
         }
 
-        .song-title {
-            font-size: 18px;
+        /* Visualizador de letras dinámico */
+        .lyrics-display {
+            font-size: 26px;
             font-weight: bold;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-
-        .song-artist {
-            font-size: 12px;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-
-        .lyrics-box {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid #2a2d3d;
-            border-radius: 10px;
-            padding: 15px;
-            width: 100%;
-            max-height: 180px;
-            overflow-y: auto;
+            color: var(--text-main);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            box-sizing: border-box;
+            line-height: 1.4;
+            transition: opacity 0.2s ease-in-out;
+            padding: 0 10px;
         }
 
-        .lyrics-line {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            white-space: pre-line;
-        }
-
+        /* Controles de reproducción */
         .controls {
             display: flex;
             gap: 15px;
-            width: 100%;
             justify-content: center;
         }
 
         .control-btn {
-            background: #2a2d3d;
-            border: none;
+            background: #1c1f2b;
+            border: 1px solid #2a2d3d;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 20px;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
@@ -135,16 +116,17 @@
         }
 
         .control-btn:hover {
-            background: #3b3f54;
+            background: #2a2d3d;
         }
 
         .control-btn.active {
             background: var(--primary-pink);
+            border-color: var(--primary-pink);
         }
 
         .bg-particle {
             position: absolute;
-            color: rgba(224, 109, 125, 0.15);
+            color: rgba(224, 109, 125, 0.12);
             font-size: 14px;
             animation: floatUp 6s linear infinite;
             pointer-events: none;
@@ -167,34 +149,23 @@
 </head>
 <body>
 
+    <!-- Pantalla de inicio con el texto solicitado -->
     <div class="welcome-overlay" id="welcomeOverlay">
-        <div style="font-size: 40px;">💌</div>
+        <div style="font-size: 45px;">💌</div>
         <button class="start-btn" onclick="startExperience()">¡Atención, amore! Abre la carta</button>
     </div>
 
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic">
         <source src="Goo Iris.mp3" type="audio/mp3">
     </audio>
 
     <div id="bg-animation"></div>
 
     <div class="player-container">
-        <div class="song-info">
-            <div class="song-title">IRIS</div>
-            <div class="song-artist">GOO GOO DOLLS</div>
-        </div>
-
-        <div class="lyrics-box">
-            <div class="lyrics-line" id="lyricsText">And I'd give up forever to touch you
-'Cause I know that you feel me somehow
-'Cause you're closer to heaven than I'll ever be
-And I don't want to go home right now
-
-And all I can taste is this moment
-And all I can breathe is your life
-'Cause sooner or later it's over
-I just don't want to miss you tonight</div>
-        </div>
+        <div class="song-header">Iris • Goo Goo Dolls</div>
+        
+        <!-- Línea de letra activa sincronizada -->
+        <div class="lyrics-display" id="lyricsText">...</div>
 
         <div class="controls">
             <button class="control-btn" onclick="restartSong()">Reiniciar</button>
@@ -222,6 +193,20 @@ I just don't want to miss you tonight</div>
 
         const music = document.getElementById('bgMusic');
         const playPauseBtn = document.getElementById('playPauseBtn');
+        const lyricsText = document.getElementById('lyricsText');
+
+        // Sincronización de tiempos (en segundos) con las líneas de la canción
+        const lyricsData = [
+            { time: 0, text: "🎵" },
+            { time: 14, text: "And I'd give up forever to touch you" },
+            { time: 21, text: "'Cause I know that you feel me somehow" },
+            { time: 28, text: "'Cause you're closer to heaven than I'll ever be" },
+            { time: 35, text: "And I don't want to go home right now" },
+            { time: 44, text: "And all I can taste is this moment" },
+            { time: 51, text: "'And all I can breathe is your life" },
+            { time: 58, text: "'Cause sooner or later it's over" },
+            { time: 65, text: "I just don't want to miss you tonight" }
+        ];
 
         function startExperience() {
             const overlay = document.getElementById('welcomeOverlay');
@@ -229,6 +214,19 @@ I just don't want to miss you tonight</div>
 
             music.play().catch(err => console.log("Error de reproducción:", err));
         }
+
+        // Actualización dinámica de las letras según el segundo del audio
+        music.addEventListener('timeupdate', () => {
+            const currentTime = music.currentTime;
+            let currentLine = lyricsData[0].text;
+
+            for (let i = 0; i < lyricsData.length; i++) {
+                if (currentTime >= lyricsData[i].time) {
+                    currentLine = lyricsData[i].text;
+                }
+            }
+            lyricsText.textContent = currentLine;
+        });
 
         function togglePlay() {
             if (music.paused) {
