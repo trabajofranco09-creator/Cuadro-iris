@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para ti 🤍</title>
+    <title>Para ti</title>
     <style>
         :root {
             --bg-color: #fcf8f2;
@@ -24,15 +24,14 @@
             height: 100vh;
             overflow: hidden;
             position: relative;
+            user-select: none;
         }
 
-        /* Fondo con corazones flotantes sutiles */
         .bg-heart {
             position: absolute;
             color: rgba(224, 109, 125, 0.2);
             font-size: 20px;
             animation: floatUp 6s linear infinite;
-            user-select: none;
             pointer-events: none;
         }
 
@@ -50,17 +49,17 @@
             }
         }
 
-        /* Contenedor principal */
         .main-container {
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 40px;
+            gap: 60px;
             z-index: 2;
+            height: 80vh;
+            justify-content: space-between;
         }
 
-        /* Sección del sobre */
         .envelope-box {
             display: flex;
             flex-direction: column;
@@ -83,14 +82,15 @@
             font-weight: bold;
         }
 
-        /* Sección del arco */
         .bow-section {
-            cursor: pointer;
-            transition: transform 0.2s;
+            cursor: grab;
+            transition: transform 0.1s ease;
+            touch-action: none;
+            padding: 20px;
         }
 
-        .bow-section:hover {
-            transform: scale(1.05);
+        .bow-section:active {
+            cursor: grabbing;
         }
 
         .bow {
@@ -103,7 +103,6 @@
             margin-top: 5px;
         }
 
-        /* Ventana Modal Estilo Retro */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -181,7 +180,6 @@
             margin: 15px 0;
         }
 
-        /* Botones */
         .btn-container {
             display: flex;
             justify-content: center;
@@ -220,23 +218,20 @@
 </head>
 <body>
 
-    <!-- Fondo dinámico -->
     <div id="bg-animation"></div>
 
-    <!-- Contenido principal en pantalla -->
     <div class="main-container">
-        <div class="envelope-box">
+        <div class="envelope-box" id="envelopeBox">
             <div class="envelope">💌</div>
             <div class="envelope-text">♥ From Someone Special For You ♥</div>
         </div>
 
-        <div class="bow-section" onclick="openModal()">
+        <div class="bow-section" id="bowSection">
             <div class="bow">🏹</div>
-            <div class="instruction">Aim for the heart 🤍</div>
+            <div class="instruction">Arrastra hacia la carta 🤍</div>
         </div>
     </div>
 
-    <!-- Ventana Modal (Inicia oculta) -->
     <div class="modal-overlay" id="modalOverlay" style="display: none;">
         <div class="modal-window">
             <div class="modal-header">
@@ -260,7 +255,6 @@
     </div>
 
     <script>
-        // Generar corazones flotantes en el fondo
         function createBgHearts() {
             const container = document.getElementById('bg-animation');
             setInterval(() => {
@@ -279,18 +273,61 @@
         }
         createBgHearts();
 
-        // Mostrar la ventana modal al hacer clic en el arco
+        const bowSection = document.getElementById('bowSection');
+        let isDragging = false;
+        let startY = 0;
+        let currentY = 0;
+
+        bowSection.addEventListener('mousedown', startDrag);
+        bowSection.addEventListener('touchstart', startDrag);
+
+        window.addEventListener('mousemove', drag);
+        window.addEventListener('touchmove', drag);
+
+        window.addEventListener('mouseup', endDrag);
+        window.addEventListener('touchend', endDrag);
+
+        function startDrag(e) {
+            isDragging = true;
+            startY = e.clientY || e.touches[0].clientY;
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            const clientY = e.clientY || e.touches[0].clientY;
+            const deltaY = clientY - startY;
+            
+            // Permitir arrastrar hacia arriba (valores negativos)
+            if (deltaY < 0 && deltaY > -250) {
+                currentY = deltaY;
+                bowSection.style.transform = `translateY(${currentY}px)`;
+            }
+        }
+
+        function endDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+
+            // Si se arrastra lo suficiente hacia la carta, se abre el modal
+            if (currentY < -120) {
+                openModal();
+            }
+            
+            // Regresar la ballesta a su posición inicial
+            bowSection.style.transform = 'translateY(0)';
+            currentY = 0;
+        }
+
         function openModal() {
             document.getElementById('modalOverlay').style.display = 'flex';
         }
 
-        // Lógica para que el botón "NO" hable/se mueva aleatoriamente
         function moveButton() {
             const btnNo = document.getElementById('noBtn');
             const container = document.getElementById('btnContainer');
             
             const maxX = container.clientWidth - btnNo.clientWidth;
-            const maxY = 60; // Rango de movimiento vertical controlado
+            const maxY = 60;
 
             const randomX = Math.random() * (maxX - 50);
             const randomY = (Math.random() - 0.5) * maxY;
@@ -299,7 +336,6 @@
             btnNo.style.top = randomY + 'px';
         }
 
-        // Lógica al presionar "YES"
         function acceptLove() {
             const modalBody = document.getElementById('modalBodyContent');
             modalBody.innerHTML = `
