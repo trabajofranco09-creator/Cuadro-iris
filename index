@@ -1,0 +1,56 @@
+using System;
+using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+static class Program
+{
+    [STAThread]
+    static void Main()
+    {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+
+        // Ventana principal invisible para mantener vivo el hilo de la aplicación
+        Form invisibleHost = new Form();
+        invisibleHost.WindowState = FormWindowState.Minimized;
+        invisibleHost.ShowInTaskbar = false;
+
+        // Iniciar la secuencia de letras en segundo plano al cargar la aplicación
+        invisibleHost.Load += async (s, e) => await PlayLyricsSequence(invisibleHost);
+
+        Application.Run(invisibleHost);
+    }
+
+    private static async Task PlayLyricsSequence(Form host)
+    {
+        // Versos y tiempo de retraso en milisegundos antes de mostrar el siguiente
+        var lyrics = new (string text, int delay)[]
+        {
+            ("Her love is in your head", 2000),
+            ("You lost your earring", 3000),
+            ("Y sigues buscando respuestas", 3000),
+            ("Donde ya no hay nada", 4000)
+        };
+
+        Random rnd = new Random();
+        int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+        int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
+
+        foreach (var (text, delay) in lyrics)
+        {
+            await Task.Delay(delay);
+
+            // Generar posición aleatoria en pantalla
+            int x = rnd.Next(50, screenWidth - 300);
+            int y = rnd.Next(50, screenHeight - 200);
+
+            // Invocar la creación de la ventana en el hilo principal de la interfaz
+            host.Invoke(new Action(() =>
+            {
+                StickyNoteForm note = new StickyNoteForm(text, x, y);
+                note.Show();
+            }));
+        }
+    }
+}
