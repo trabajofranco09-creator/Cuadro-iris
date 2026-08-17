@@ -157,6 +157,7 @@
         }
 
         .modal-body {
+            pathing: 25px 20px;
             padding: 25px 20px;
             text-align: center;
             background: rgba(255, 255, 255, 0.85);
@@ -218,6 +219,10 @@
 </head>
 <body>
 
+    <audio id="bgMusic" loop>
+        <source src="iris.mp3" type="audio/mp3">
+    </audio>
+
     <div id="bg-animation"></div>
 
     <div class="main-container">
@@ -228,7 +233,7 @@
 
         <div class="bow-section" id="bowSection">
             <div class="bow">🏹</div>
-            <div class="instruction">Arrastra hacia la carta 🤍</div>
+            <div class="instruction">Arrastra hacia la carta</div>
         </div>
     </div>
 
@@ -244,7 +249,7 @@
             </div>
             <div class="modal-body" id="modalBodyContent">
                 <div class="hearts-top">♥♥♥</div>
-                <h2 id="questionText">Do you want to be my girlfriend? 🤍</h2>
+                <h2 id="questionText">Do you want to be my girlfriend?</h2>
                 <div class="cat-art" id="catImage">🐱❤️</div>
                 <div class="btn-container" id="btnContainer">
                     <button class="btn btn-yes" id="yesBtn" onclick="acceptLove()">YES</button>
@@ -290,6 +295,11 @@
         function startDrag(e) {
             isDragging = true;
             startY = e.clientY || e.touches[0].clientY;
+
+            const music = document.getElementById('bgMusic');
+            if (music.paused) {
+                music.play().catch(err => console.log("Reproducción bloqueada por el navegador"));
+            }
         }
 
         function drag(e) {
@@ -297,7 +307,6 @@
             const clientY = e.clientY || e.touches[0].clientY;
             const deltaY = clientY - startY;
             
-            // Permitir arrastrar hacia arriba (valores negativos)
             if (deltaY < 0 && deltaY > -250) {
                 currentY = deltaY;
                 bowSection.style.transform = `translateY(${currentY}px)`;
@@ -308,12 +317,10 @@
             if (!isDragging) return;
             isDragging = false;
 
-            // Si se arrastra lo suficiente hacia la carta, se abre el modal
             if (currentY < -120) {
                 openModal();
             }
             
-            // Regresar la ballesta a su posición inicial
             bowSection.style.transform = 'translateY(0)';
             currentY = 0;
         }
@@ -340,7 +347,7 @@
             const modalBody = document.getElementById('modalBodyContent');
             modalBody.innerHTML = `
                 <div class="hearts-top">♥♥♥</div>
-                <h2 style="color: #e06d7d;">Yayyy! I love you 🤍</h2>
+                <h2 style="color: #e06d7d;">Yayyy! I love you</h2>
                 <div class="cat-art">🐱💖</div>
                 <p style="font-size: 12px; color: #666; margin-top: 10px;">I'm really happy you can accept me</p>
                 <button class="btn btn-yes" style="margin-top: 20px; width: 100%; pointer-events: none;">I LOVE YOU</button>
