@@ -1,56 +1,315 @@
-using System;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-static class Program
-{
-    [STAThread]
-    static void Main()
-    {
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-
-        // Ventana principal invisible para mantener vivo el hilo de la aplicación
-        Form invisibleHost = new Form();
-        invisibleHost.WindowState = FormWindowState.Minimized;
-        invisibleHost.ShowInTaskbar = false;
-
-        // Iniciar la secuencia de letras en segundo plano al cargar la aplicación
-        invisibleHost.Load += async (s, e) => await PlayLyricsSequence(invisibleHost);
-
-        Application.Run(invisibleHost);
-    }
-
-    private static async Task PlayLyricsSequence(Form host)
-    {
-        // Versos y tiempo de retraso en milisegundos antes de mostrar el siguiente
-        var lyrics = new (string text, int delay)[]
-        {
-            ("Her love is in your head", 2000),
-            ("You lost your earring", 3000),
-            ("Y sigues buscando respuestas", 3000),
-            ("Donde ya no hay nada", 4000)
-        };
-
-        Random rnd = new Random();
-        int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
-        int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
-
-        foreach (var (text, delay) in lyrics)
-        {
-            await Task.Delay(delay);
-
-            // Generar posición aleatoria en pantalla
-            int x = rnd.Next(50, screenWidth - 300);
-            int y = rnd.Next(50, screenHeight - 200);
-
-            // Invocar la creación de la ventana en el hilo principal de la interfaz
-            host.Invoke(new Action(() =>
-            {
-                StickyNoteForm note = new StickyNoteForm(text, x, y);
-                note.Show();
-            }));
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti 🤍</title>
+    <style>
+        :root {
+            --bg-color: #fcf8f2;
+            --primary-pink: #f7cbd0;
+            --dark-pink: #e06d7d;
+            --text-color: #5c4033;
+            --window-bg: #fff0f3;
         }
-    }
-}
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Fondo con corazones flotantes sutiles */
+        .bg-heart {
+            position: absolute;
+            color: rgba(224, 109, 125, 0.2);
+            font-size: 20px;
+            animation: floatUp 6s linear infinite;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Contenedor principal */
+        .main-container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            z-index: 2;
+        }
+
+        /* Sección del sobre */
+        .envelope-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .envelope {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 2px dashed var(--dark-pink);
+            font-size: 40px;
+        }
+
+        .envelope-text {
+            font-size: 14px;
+            color: var(--dark-pink);
+            font-weight: bold;
+        }
+
+        /* Sección del arco */
+        .bow-section {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .bow-section:hover {
+            transform: scale(1.05);
+        }
+
+        .bow {
+            font-size: 50px;
+        }
+
+        .instruction {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* Ventana Modal Estilo Retro */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-window {
+            background: var(--window-bg);
+            border: 2px solid var(--dark-pink);
+            border-radius: 8px;
+            width: 320px;
+            box-shadow: 0 10px 25px rgba(224, 109, 125, 0.2);
+            overflow: hidden;
+            background-image: radial-gradient(var(--primary-pink) 1px, transparent 1px);
+            background-size: 15px 15px;
+        }
+
+        .modal-header {
+            background: #fff;
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--dark-pink);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--dark-pink);
+            letter-spacing: 1px;
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid var(--dark-pink);
+            display: inline-block;
+        }
+
+        .modal-body {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        .hearts-top {
+            color: var(--dark-pink);
+            font-size: 12px;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .modal-body h2 {
+            font-size: 16px;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .cat-art {
+            font-size: 60px;
+            margin: 15px 0;
+        }
+
+        /* Botones */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+            position: relative;
+            height: 40px;
+        }
+
+        .btn {
+            padding: 8px 25px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid var(--dark-pink);
+            transition: all 0.1s ease;
+        }
+
+        .btn-yes {
+            background-color: var(--dark-pink);
+            color: white;
+        }
+
+        .btn-yes:hover {
+            background-color: #c95a6b;
+        }
+
+        .btn-no {
+            background-color: white;
+            color: var(--dark-pink);
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo dinámico -->
+    <div id="bg-animation"></div>
+
+    <!-- Contenido principal en pantalla -->
+    <div class="main-container">
+        <div class="envelope-box">
+            <div class="envelope">💌</div>
+            <div class="envelope-text">♥ From Someone Special For You ♥</div>
+        </div>
+
+        <div class="bow-section" onclick="openModal()">
+            <div class="bow">🏹</div>
+            <div class="instruction">Aim for the heart 🤍</div>
+        </div>
+    </div>
+
+    <!-- Ventana Modal (Inicia oculta) -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title">LOVE</span>
+                <div class="window-dots">
+                    <span class="dot" style="background: #ffb3ba;"></span>
+                    <span class="dot" style="background: #ffffba;"></span>
+                    <span class="dot" style="background: #baffc9;"></span>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBodyContent">
+                <div class="hearts-top">♥♥♥</div>
+                <h2 id="questionText">Do you want to be my girlfriend? 🤍</h2>
+                <div class="cat-art" id="catImage">🐱❤️</div>
+                <div class="btn-container" id="btnContainer">
+                    <button class="btn btn-yes" id="yesBtn" onclick="acceptLove()">YES</button>
+                    <button class="btn btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generar corazones flotantes en el fondo
+        function createBgHearts() {
+            const container = document.getElementById('bg-animation');
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('bg-heart');
+                heart.innerHTML = '♥';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                container.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 7000);
+            }, 400);
+        }
+        createBgHearts();
+
+        // Mostrar la ventana modal al hacer clic en el arco
+        function openModal() {
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        // Lógica para que el botón "NO" hable/se mueva aleatoriamente
+        function moveButton() {
+            const btnNo = document.getElementById('noBtn');
+            const container = document.getElementById('btnContainer');
+            
+            const maxX = container.clientWidth - btnNo.clientWidth;
+            const maxY = 60; // Rango de movimiento vertical controlado
+
+            const randomX = Math.random() * (maxX - 50);
+            const randomY = (Math.random() - 0.5) * maxY;
+
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+        }
+
+        // Lógica al presionar "YES"
+        function acceptLove() {
+            const modalBody = document.getElementById('modalBodyContent');
+            modalBody.innerHTML = `
+                <div class="hearts-top">♥♥♥</div>
+                <h2 style="color: #e06d7d;">Yayyy! I love you 🤍</h2>
+                <div class="cat-art">🐱💖</div>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">I'm really happy you can accept me</p>
+                <button class="btn btn-yes" style="margin-top: 20px; width: 100%; pointer-events: none;">I LOVE YOU</button>
+            `;
+        }
+    </script>
+</body>
+</html>
