@@ -20,7 +20,7 @@
             padding: 0;
             background-color: var(--bg-color);
             background-image: radial-gradient(circle at center, #1f1018 0%, var(--bg-color) 100%);
-            font-family: 'Courier New', Courier, monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -31,7 +31,7 @@
             user-select: none;
         }
 
-        /* Pantalla de inicio con el botón solicitado */
+        /* Pantalla inicial */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -64,120 +64,173 @@
         .start-btn:hover {
             background-color: #c95a6b;
             transform: scale(1.05);
-            box-shadow: 0 0 35px var(--glow-color);
         }
 
-        /* Contenedor principal estilo reproductor estético */
+        /* Contenedor estilo Spotify */
         .player-container {
             background-color: var(--card-bg);
-            border: 1px solid rgba(224, 109, 125, 0.2);
-            border-radius: 20px;
+            border: 1px solid rgba(224, 109, 125, 0.15);
+            border-radius: 24px;
             width: 90%;
-            max-width: 550px;
-            padding: 40px 30px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(224, 109, 125, 0.1);
+            max-width: 420px;
+            padding: 35px 25px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 25px rgba(224, 109, 125, 0.08);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 30px;
+            gap: 25px;
             z-index: 2;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
         }
 
         .song-header {
-            font-size: 12px;
-            letter-spacing: 4px;
-            color: var(--text-muted);
-            text-transform: uppercase;
+            text-align: center;
         }
 
-        /* Letras dinámicas con efecto de transición suave */
-        .lyrics-display {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--text-main);
-            min-height: 90px;
+        .song-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .song-artist {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Visualizador de Letras */
+        .lyrics-section {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 16px;
+            padding: 25px 15px;
+            min-height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            line-height: 1.5;
-            padding: 0 15px;
-            text-shadow: 0 0 15px rgba(247, 203, 208, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .lyrics-display {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.4;
+            text-shadow: 0 0 12px rgba(247, 203, 208, 0.25);
             opacity: 1;
-            transition: opacity 0.35s ease, transform 0.35s ease;
+            transition: opacity 0.25s ease, transform 0.25s ease;
         }
 
         .lyrics-display.fade-out {
             opacity: 0;
-            transform: translateY(-8px);
+            transform: translateY(-5px);
         }
 
-        /* Controles de reproducción */
-        .controls {
+        /* Controles estilo Spotify */
+        .progress-container {
             display: flex;
-            gap: 15px;
-            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
             width: 100%;
         }
 
-        .control-btn {
-            background: #25141d;
-            border: 1px solid rgba(224, 109, 125, 0.3);
-            color: white;
-            padding: 10px 22px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 8px;
+        .progress-bar {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.15);
+            outline: none;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
 
-        .control-btn:hover {
-            background: #381f2c;
-            border-color: var(--primary-pink);
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-main);
+            cursor: pointer;
+            transition: transform 0.1s;
         }
 
-        .control-btn.active {
-            background: var(--primary-pink);
-            border-color: var(--primary-pink);
-            box-shadow: 0 0 15px var(--glow-color);
+        .progress-bar::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
         }
 
-        /* Partículas de fondo románticas */
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .spotify-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 5px;
+        }
+
+        .control-icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .control-icon-btn:hover {
+            color: var(--text-main);
+            transform: scale(1.1);
+        }
+
+        .play-pause-btn {
+            background-color: var(--text-main);
+            color: var(--bg-color);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.15s, background-color 0.15s;
+        }
+
+        .play-pause-btn:hover {
+            transform: scale(1.08);
+            background-color: var(--soft-pink);
+        }
+
+        /* Partículas de fondo */
         .bg-particle {
             position: absolute;
-            color: rgba(224, 109, 125, 0.25);
-            font-size: 16px;
+            color: rgba(224, 109, 125, 0.2);
+            font-size: 14px;
             animation: floatUp 7s linear infinite;
             pointer-events: none;
-            text-shadow: 0 0 8px var(--glow-color);
         }
 
         @keyframes floatUp {
-            0% {
-                transform: translateY(105vh) scale(0.6);
-                opacity: 0;
-            }
-            30% {
-                opacity: 0.8;
-            }
-            70% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(-10vh) scale(1.3);
-                opacity: 0;
-            }
+            0% { transform: translateY(105vh) scale(0.6); opacity: 0; }
+            30% { opacity: 0.7; }
+            70% { opacity: 0.7; }
+            100% { transform: translateY(-10vh) scale(1.3); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Pantalla inicial con el texto solicitado -->
     <div class="welcome-overlay" id="welcomeOverlay">
-        <div style="font-size: 50px;">💌</div>
+        <div style="font-size: 45px;">💌</div>
         <button class="start-btn" onclick="startExperience()">¡Atención, amore! Abre la carta</button>
     </div>
 
@@ -188,14 +241,33 @@
     <div id="bg-animation"></div>
 
     <div class="player-container">
-        <div class="song-header">Iris • Goo Goo Dolls</div>
+        <div class="song-header">
+            <div class="song-title">Iris</div>
+            <div class="song-artist">Goo Goo Dolls</div>
+        </div>
         
-        <!-- Línea de letra activa sincronizada -->
-        <div class="lyrics-display" id="lyricsText">...</div>
+        <div class="lyrics-section">
+            <div class="lyrics-display" id="lyricsText">...</div>
+        </div>
 
-        <div class="controls">
-            <button class="control-btn" onclick="restartSong()">Reiniciar</button>
-            <button class="control-btn active" id="playPauseBtn" onclick="togglePlay()">Pausar</button>
+        <div class="progress-container">
+            <input type="range" class="progress-bar" id="progressBar" value="0" min="0" max="100" step="0.1">
+            <div class="time-info">
+                <span id="currentTime">0:00</span>
+                <span id="durationTime">0:00</span>
+            </div>
+        </div>
+
+        <div class="spotify-controls">
+            <!-- Botón Reiniciar -->
+            <button class="control-icon-btn" onclick="restartSong()" title="Reiniciar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+            </button>
+            
+            <!-- Botón Reproducir / Pausar Principal -->
+            <button class="play-pause-btn" id="playPauseBtn" onclick="togglePlay()">
+                <svg id="playPauseIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            </button>
         </div>
     </div>
 
@@ -208,47 +280,55 @@
                 particle.innerHTML = '♥';
                 particle.style.left = Math.random() * 100 + 'vw';
                 particle.style.animationDuration = (Math.random() * 3 + 5) + 's';
-                particle.style.fontSize = (Math.random() * 10 + 12) + 'px';
                 container.appendChild(particle);
-
-                setTimeout(() => {
-                    particle.remove();
-                }, 8000);
-            }, 400);
+                setTimeout(() => particle.remove(), 8000);
+            }, 500);
         }
         createParticles();
 
         const music = document.getElementById('bgMusic');
         const playPauseBtn = document.getElementById('playPauseBtn');
+        const playPauseIcon = document.getElementById('playPauseIcon');
         const lyricsText = document.getElementById('lyricsText');
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationTimeEl = document.getElementById('durationTime');
 
-        // Sincronización de tiempos y letras
+        // Sincronización precisa basada en el video de prueba
         const lyricsData = [
             { time: 0, text: "🎵" },
-            { time: 14, text: "And I'd give up forever to touch you" },
-            { time: 21, text: "'Cause I know that you feel me somehow" },
-            { time: 28, text: "'Cause you're closer to heaven than I'll ever be" },
-            { time: 35, text: "And I don't want to go home right now" },
-            { time: 44, text: "And all I can taste is this moment" },
-            { time: 51, text: "And all I can breathe is your life" },
-            { time: 58, text: "'Cause sooner or later it's over" },
-            { time: 65, text: "I just don't want to miss you tonight" }
+            { time: 2.8, text: "And I'd give up forever to touch you" },
+            { time: 10.2, text: "'Cause I know that you feel me somehow" },
+            { time: 16.5, text: "'Cause you're closer to heaven than I'll ever be" },
+            { time: 23.8, text: "And I don't want to go home right now" },
+            { time: 31.5, text: "And all I can taste is this moment" },
+            { time: 38.5, text: "And all I can breathe is your life" },
+            { time: 45.5, text: "'Cause sooner or later it's over" },
+            { time: 52.5, text: "I just don't want to miss you tonight" }
         ];
 
         let lastLineIndex = -1;
 
         function startExperience() {
-            const overlay = document.getElementById('welcomeOverlay');
-            overlay.style.display = 'none';
-
-            music.play().catch(err => console.log("Error de reproducción:", err));
+            document.getElementById('welcomeOverlay').style.display = 'none';
+            music.play().catch(err => console.log("Error:", err));
         }
 
-        // Lógica de actualización sincronizada con efecto visual de desvanecimiento
+        music.addEventListener('loadedmetadata', () => {
+            durationTimeEl.textContent = formatTime(music.duration);
+        });
+
         music.addEventListener('timeupdate', () => {
             const currentTime = music.currentTime;
-            let activeIndex = 0;
+            
+            // Actualizar barra de progreso
+            if (music.duration) {
+                progressBar.value = (currentTime / music.duration) * 100;
+            }
+            currentTimeEl.textContent = formatTime(currentTime);
 
+            // Sincronizar letra
+            let activeIndex = 0;
             for (let i = 0; i < lyricsData.length; i++) {
                 if (currentTime >= lyricsData[i].time) {
                     activeIndex = i;
@@ -257,35 +337,40 @@
 
             if (activeIndex !== lastLineIndex) {
                 lastLineIndex = activeIndex;
-                
-                // Efecto de salida (fade-out)
                 lyricsText.classList.add('fade-out');
-                
                 setTimeout(() => {
                     lyricsText.textContent = lyricsData[activeIndex].text;
-                    // Efecto de entrada (fade-in)
                     lyricsText.classList.remove('fade-out');
                 }, 200);
+            }
+        });
+
+        progressBar.addEventListener('input', () => {
+            if (music.duration) {
+                music.currentTime = (progressBar.value / 100) * music.duration;
             }
         });
 
         function togglePlay() {
             if (music.paused) {
                 music.play();
-                playPauseBtn.textContent = "Pausar";
-                playPauseBtn.classList.add('active');
+                playPauseIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
             } else {
                 music.pause();
-                playPauseBtn.textContent = "Reproducir";
-                playPauseBtn.classList.remove('active');
+                playPauseIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
             }
         }
 
         function restartSong() {
             music.currentTime = 0;
             music.play();
-            playPauseBtn.textContent = "Pausar";
-            playPauseBtn.classList.add('active');
+            playPauseIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
     </script>
 </body>
