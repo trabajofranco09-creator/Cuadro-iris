@@ -65,7 +65,6 @@
             transform: scale(1.05);
         }
 
-        /* Contenedor principal que agrupa carta y reproductor lado a lado */
         .main-wrapper {
             display: flex;
             gap: 30px;
@@ -74,48 +73,18 @@
             flex-wrap: wrap;
             z-index: 2;
             width: 100%;
-            max-width: 900px;
+            max-width: 920px;
             padding: 20px;
             box-sizing: border-box;
         }
 
-        /* Estilo de la Carta */
-        .letter-container {
-            background-color: var(--card-bg);
-            border: 1px solid rgba(224, 109, 125, 0.15);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 400px;
-            padding: 30px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 25px rgba(224, 109, 125, 0.08);
-            backdrop-filter: blur(12px);
-            font-size: 13.5px;
-            line-height: 1.6;
-            color: var(--text-main);
-            max-height: 80vh;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        .letter-container p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-
-        .letter-container p:last-child {
-            margin-bottom: 0;
-            font-weight: bold;
-            text-align: left;
-            color: var(--soft-pink);
-        }
-
-        /* Contenedor estilo Spotify */
+        /* Reproductor a la izquierda */
         .player-container {
             background-color: var(--card-bg);
             border: 1px solid rgba(224, 109, 125, 0.15);
             border-radius: 24px;
             width: 100%;
-            max-width: 400px;
+            max-width: 410px;
             padding: 35px 25px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 25px rgba(224, 109, 125, 0.08);
             display: flex;
@@ -251,6 +220,52 @@
             background-color: var(--soft-pink);
         }
 
+        /* Carta a la derecha con estilo visual mejorado */
+        .letter-container {
+            background: linear-gradient(145deg, #1a0d15 0%, var(--card-bg) 100%);
+            border: 1px solid rgba(224, 109, 125, 0.3);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 410px;
+            padding: 35px 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(224, 109, 125, 0.12);
+            backdrop-filter: blur(12px);
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-main);
+            max-height: 82vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .letter-container::before {
+            content: '✦';
+            display: block;
+            text-align: center;
+            color: var(--primary-pink);
+            font-size: 14px;
+            margin-bottom: 12px;
+            opacity: 0.8;
+            letter-spacing: 6px;
+        }
+
+        .letter-container p {
+            margin-bottom: 18px;
+            text-align: justify;
+        }
+
+        .letter-container .signature {
+            margin-top: 25px;
+            font-weight: 600;
+            color: var(--soft-pink);
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            text-align: left;
+            border-left: 2px solid var(--primary-pink);
+            padding-left: 10px;
+        }
+
         .bg-particle {
             position: absolute;
             color: rgba(224, 109, 125, 0.2);
@@ -281,14 +296,7 @@
     <div id="bg-animation"></div>
 
     <div class="main-wrapper">
-        <!-- Carta -->
-        <div class="letter-container">
-            <p>Cuando el amor es suficiente se convierte en un refugio. La canción nos dice que el verdadero amor no es encontrar a alguien que te complete, sino encontrar a alguien con quien puedas ser honestamente incompleto y aceptado, y, aun así, sentir que has encontrado un hogar.</p>
-            <p>Han sido pocas las veces que te he dicho que te amo, no por no sentirlo sino por no querer pecar de intensidad. En cambio te lo he querido demostrar en cada una de mis acciones. No quise mandarte simplemente una canción, quise crear un recuerdo de nosotros y lo que me haces sentir. No quiero que el mundo me vea, porque no creo que lo entiendan, cuando todo se hace para romperse, solo quiero que sepas quién soy.</p>
-            <p>Te amo Iriana</p>
-        </div>
-
-        <!-- Reproductor de Música -->
+        <!-- Reproductor de Música (Izquierda) -->
         <div class="player-container">
             <div class="song-header">
                 <div class="song-title">Iris</div>
@@ -316,6 +324,13 @@
                     <svg id="playPauseIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
                 </button>
             </div>
+        </div>
+
+        <!-- Carta (Derecha) -->
+        <div class="letter-container">
+            <p>Cuando el amor es suficiente se convierte en un refugio. La canción nos dice que el verdadero amor no es encontrar a alguien que te complete, sino encontrar a alguien con quien puedas ser honestamente incompleto y aceptado, y, aun así, sentir que has encontrado un hogar.</p>
+            <p>Han sido pocas las veces que te he dicho que te amo, no por no sentirlo sino por no querer pecar de intensidad. En cambio te lo he querido demostrar en cada una de mis acciones. No quise mandarte simplemente una canción, quise crear un recuerdo de nosotros y lo que me haces sentir. No quiero que el mundo me vea, porque no creo que lo entiendan, cuando todo se hace para romperse, solo quiero que sepas quién soy.</p>
+            <div class="signature">Te amo Iriana</div>
         </div>
     </div>
 
