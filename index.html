@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para ti</title>
+    <title>Iris - Goo Goo Dolls</title>
     <style>
         :root {
-            --bg-color: #fcf8f2;
-            --primary-pink: #f7cbd0;
-            --dark-pink: #e06d7d;
-            --text-color: #5c4033;
-            --window-bg: #fff0f3;
+            --bg-color: #0f1016;
+            --card-bg: #181a26;
+            --primary-pink: #e06d7d;
+            --text-main: #fcf8f2;
+            --text-muted: #9ba1a6;
         }
 
         body {
@@ -24,17 +24,18 @@
             height: 100vh;
             overflow: hidden;
             position: relative;
+            color: var(--text-main);
             user-select: none;
         }
 
-        /* Pantalla inicial para desbloquear audio en móviles */
+        /* Pantalla inicial con el botón solicitado */
         .welcome-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(252, 248, 242, 0.95);
+            background: var(--bg-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -44,16 +45,16 @@
         }
 
         .start-btn {
-            background-color: var(--dark-pink);
+            background-color: var(--primary-pink);
             color: white;
-            border: 2px solid var(--dark-pink);
-            padding: 12px 30px;
+            border: none;
+            padding: 14px 28px;
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px;
             border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(224, 109, 125, 0.3);
+            box-shadow: 0 4px 15px rgba(224, 109, 125, 0.4);
             transition: background 0.2s;
         }
 
@@ -61,10 +62,90 @@
             background-color: #c95a6b;
         }
 
-        .bg-heart {
+        /* Reproductor y Letra */
+        .player-container {
+            background-color: var(--card-bg);
+            border: 1px solid #2a2d3d;
+            border-radius: 16px;
+            width: 350px;
+            max-width: 90%;
+            padding: 30px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 2;
+        }
+
+        .song-info {
+            text-align: center;
+        }
+
+        .song-title {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .song-artist {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .lyrics-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #2a2d3d;
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            max-height: 180px;
+            overflow-y: auto;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .lyrics-line {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: #2a2d3d;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #3b3f54;
+        }
+
+        .control-btn.active {
+            background: var(--primary-pink);
+        }
+
+        .bg-particle {
             position: absolute;
-            color: rgba(224, 109, 125, 0.2);
-            font-size: 20px;
+            color: rgba(224, 109, 125, 0.15);
+            font-size: 14px;
             animation: floatUp 6s linear infinite;
             pointer-events: none;
         }
@@ -75,227 +156,20 @@
                 opacity: 0;
             }
             50% {
-                opacity: 0.8;
+                opacity: 1;
             }
             100% {
                 transform: translateY(-10vh) scale(1.2);
                 opacity: 0;
             }
         }
-
-        .main-container {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 40px;
-            z-index: 2;
-            height: 80vh;
-            justify-content: space-between;
-        }
-
-        .envelope-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .envelope {
-            background: #fff;
-            padding: 20px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 2px dashed var(--dark-pink);
-            font-size: 40px;
-        }
-
-        .envelope-text {
-            font-size: 14px;
-            color: var(--dark-pink);
-            font-weight: bold;
-        }
-
-        .bow-section {
-            cursor: grab;
-            transition: transform 0.1s ease;
-            touch-action: none;
-            padding: 20px;
-        }
-
-        .bow-section:active {
-            cursor: grabbing;
-        }
-
-        .bow {
-            font-size: 50px;
-        }
-
-        .instruction {
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
-        }
-
-        /* Botón de Letra */
-        .lyrics-btn {
-            background: white;
-            border: 2px solid var(--dark-pink);
-            color: var(--dark-pink);
-            padding: 6px 15px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .lyrics-btn:hover {
-            background: var(--window-bg);
-        }
-
-        /* Modales */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.15);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .modal-window {
-            background: var(--window-bg);
-            border: 2px solid var(--dark-pink);
-            border-radius: 8px;
-            width: 320px;
-            box-shadow: 0 10px 25px rgba(224, 109, 125, 0.2);
-            overflow: hidden;
-            background-image: radial-gradient(var(--primary-pink) 1px, transparent 1px);
-            background-size: 15px 15px;
-        }
-
-        .modal-header {
-            background: #fff;
-            padding: 8px 12px;
-            border-bottom: 2px solid var(--dark-pink);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--dark-pink);
-            letter-spacing: 1px;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--dark-pink);
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .window-dots {
-            display: flex;
-            gap: 4px;
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            border: 1px solid var(--dark-pink);
-            display: inline-block;
-        }
-
-        .modal-body {
-            padding: 20px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.85);
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .hearts-top {
-            color: var(--dark-pink);
-            font-size: 12px;
-            margin-bottom: 10px;
-            letter-spacing: 3px;
-        }
-
-        .modal-body h2 {
-            font-size: 16px;
-            color: var(--text-color);
-            margin-bottom: 15px;
-        }
-
-        .lyrics-text {
-            font-size: 12px;
-            color: var(--text-color);
-            line-height: 1.5;
-            white-space: pre-line;
-            text-align: left;
-            padding: 0 10px;
-        }
-
-        .cat-art {
-            font-size: 50px;
-            margin: 10px 0;
-        }
-
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            position: relative;
-            height: 40px;
-        }
-
-        .btn {
-            padding: 8px 25px;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            font-size: 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 2px solid var(--dark-pink);
-            transition: all 0.1s ease;
-        }
-
-        .btn-yes {
-            background-color: var(--dark-pink);
-            color: white;
-        }
-
-        .btn-yes:hover {
-            background-color: #c95a6b;
-        }
-
-        .btn-no {
-            background-color: white;
-            color: var(--dark-pink);
-            position: absolute;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Pantalla de inicio para garantizar reproducción en móviles -->
     <div class="welcome-overlay" id="welcomeOverlay">
         <div style="font-size: 40px;">💌</div>
-        <div style="color: var(--dark-pink); font-weight: bold; font-size: 14px;">Para una persona especial</div>
-        <button class="start-btn" onclick="startExperience()">Abrir cartita</button>
+        <button class="start-btn" onclick="startExperience()">¡Atención, amore! Abre la carta</button>
     </div>
 
     <audio id="bgMusic" loop>
@@ -304,51 +178,14 @@
 
     <div id="bg-animation"></div>
 
-    <div class="main-container">
-        <div class="envelope-box" id="envelopeBox">
-            <div class="envelope">💌</div>
-            <div class="envelope-text">♥ From Someone Special For You ♥</div>
-            <button class="lyrics-btn" onclick="openLyrics()">Ver Letra 🎵</button>
+    <div class="player-container">
+        <div class="song-info">
+            <div class="song-title">IRIS</div>
+            <div class="song-artist">GOO GOO DOLLS</div>
         </div>
 
-        <div class="bow-section" id="bowSection">
-            <div class="bow">🏹</div>
-            <div class="instruction">Arrastra hacia la carta</div>
-        </div>
-    </div>
-
-    <!-- Modal de la Pregunta Principal -->
-    <div class="modal-overlay" id="modalOverlay" style="display: none;">
-        <div class="modal-window">
-            <div class="modal-header">
-                <span class="modal-title">LOVE</span>
-                <div class="window-dots">
-                    <span class="dot" style="background: #ffb3ba;"></span>
-                    <span class="dot" style="background: #ffffba;"></span>
-                    <span class="dot" style="background: #baffc9;"></span>
-                </div>
-            </div>
-            <div class="modal-body" id="modalBodyContent">
-                <div class="hearts-top">♥♥♥</div>
-                <h2 id="questionText">Do you want to be my girlfriend?</h2>
-                <div class="cat-art" id="catImage">🐱❤️</div>
-                <div class="btn-container" id="btnContainer">
-                    <button class="btn btn-yes" id="yesBtn" onclick="acceptLove()">YES</button>
-                    <button class="btn btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de la Letra -->
-    <div class="modal-overlay" id="lyricsModal" style="display: none;">
-        <div class="modal-window">
-            <div class="modal-header">
-                <span class="modal-title">IRIS - GOO GOO DOLLS</span>
-                <button class="close-modal" onclick="closeLyrics()">X</button>
-            </div>
-            <div class="modal-body">
-                <div class="lyrics-text">And I'd give up forever to touch you
+        <div class="lyrics-box">
+            <div class="lyrics-line" id="lyricsText">And I'd give up forever to touch you
 'Cause I know that you feel me somehow
 'Cause you're closer to heaven than I'll ever be
 And I don't want to go home right now
@@ -357,114 +194,59 @@ And all I can taste is this moment
 And all I can breathe is your life
 'Cause sooner or later it's over
 I just don't want to miss you tonight</div>
-            </div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" onclick="restartSong()">Reiniciar</button>
+            <button class="control-btn active" id="playPauseBtn" onclick="togglePlay()">Pausar</button>
         </div>
     </div>
 
     <script>
-        function createBgHearts() {
+        function createParticles() {
             const container = document.getElementById('bg-animation');
             setInterval(() => {
-                const heart = document.createElement('div');
-                heart.classList.add('bg-heart');
-                heart.innerHTML = '♥';
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
-                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
-                container.appendChild(heart);
+                const particle = document.createElement('div');
+                particle.classList.add('bg-particle');
+                particle.innerHTML = '♥';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                container.appendChild(particle);
 
                 setTimeout(() => {
-                    heart.remove();
+                    particle.remove();
                 }, 7000);
-            }, 400);
+            }, 500);
         }
-        createBgHearts();
+        createParticles();
+
+        const music = document.getElementById('bgMusic');
+        const playPauseBtn = document.getElementById('playPauseBtn');
 
         function startExperience() {
             const overlay = document.getElementById('welcomeOverlay');
             overlay.style.display = 'none';
 
-            const music = document.getElementById('bgMusic');
             music.play().catch(err => console.log("Error de reproducción:", err));
         }
 
-        function openLyrics() {
-            document.getElementById('lyricsModal').style.display = 'flex';
-        }
-
-        function closeLyrics() {
-            document.getElementById('lyricsModal').style.display = 'none';
-        }
-
-        const bowSection = document.getElementById('bowSection');
-        let isDragging = false;
-        let startY = 0;
-        let currentY = 0;
-
-        bowSection.addEventListener('mousedown', startDrag);
-        bowSection.addEventListener('touchstart', startDrag);
-
-        window.addEventListener('mousemove', drag);
-        window.addEventListener('touchmove', drag);
-
-        window.addEventListener('mouseup', endDrag);
-        window.addEventListener('touchend', endDrag);
-
-        function startDrag(e) {
-            isDragging = true;
-            startY = e.clientY || e.touches[0].clientY;
-        }
-
-        function drag(e) {
-            if (!isDragging) return;
-            const clientY = e.clientY || e.touches[0].clientY;
-            const deltaY = clientY - startY;
-            
-            if (deltaY < 0 && deltaY > -250) {
-                currentY = deltaY;
-                bowSection.style.transform = `translateY(${currentY}px)`;
+        function togglePlay() {
+            if (music.paused) {
+                music.play();
+                playPauseBtn.textContent = "Pausar";
+                playPauseBtn.classList.add('active');
+            } else {
+                music.pause();
+                playPauseBtn.textContent = "Reproducir";
+                playPauseBtn.classList.remove('active');
             }
         }
 
-        function endDrag() {
-            if (!isDragging) return;
-            isDragging = false;
-
-            if (currentY < -120) {
-                openModal();
-            }
-            
-            bowSection.style.transform = 'translateY(0)';
-            currentY = 0;
-        }
-
-        function openModal() {
-            document.getElementById('modalOverlay').style.display = 'flex';
-        }
-
-        function moveButton() {
-            const btnNo = document.getElementById('noBtn');
-            const container = document.getElementById('btnContainer');
-            
-            const maxX = container.clientWidth - btnNo.clientWidth;
-            const maxY = 60;
-
-            const randomX = Math.random() * (maxX - 50);
-            const randomY = (Math.random() - 0.5) * maxY;
-
-            btnNo.style.left = randomX + 'px';
-            btnNo.style.top = randomY + 'px';
-        }
-
-        function acceptLove() {
-            const modalBody = document.getElementById('modalBodyContent');
-            modalBody.innerHTML = `
-                <div class="hearts-top">♥♥♥</div>
-                <h2 style="color: #e06d7d;">Yayyy! I love you</h2>
-                <div class="cat-art">🐱💖</div>
-                <p style="font-size: 12px; color: #666; margin-top: 10px;">I'm really happy you can accept me</p>
-                <button class="btn btn-yes" style="margin-top: 20px; width: 100%; pointer-events: none;">I LOVE YOU</button>
-            `;
+        function restartSong() {
+            music.currentTime = 0;
+            music.play();
+            playPauseBtn.textContent = "Pausar";
+            playPauseBtn.classList.add('active');
         }
     </script>
 </body>
